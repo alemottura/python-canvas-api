@@ -23,8 +23,10 @@ class CanvasAPI():
 
     def __init__(self, access_token, base_url='https://canvas.bham.ac.uk', api_prefix='/api/v1'):
         """Construct an object to access the Canvas API. """
-        self.access_token = access_token
+        #self.access_token = access_token # no need for this to be accessible anywhere in the class
         self.api_url = base_url + api_prefix
+        self.session = requests.Session() # creates an HTTPS session
+        self.session.headers = {'Authorization': 'Bearer %s' % access_token # includes the Canvas token in the header (which should be encrypted)
 
     def put(self, api_url, payload=None):
         url = self.api_url + api_url
@@ -32,10 +34,11 @@ class CanvasAPI():
         if payload is None:
             payload = {}
 
-        if self.access_token is not None:
-            payload['access_token'] =  self.access_token
+        #if self.access_token is not None:
+        #    payload['access_token'] =  self.access_token # no need to insert token in the payload
 
-        r = requests.put(url, params=payload)        
+        #r = requests.put(url, params=payload) # see line below.
+        r = self.session.put(url, params=payload) # send request as part of session
 
         # raises an exception if there was an http error
         r.raise_for_status()
@@ -47,10 +50,11 @@ class CanvasAPI():
         if payload is None:
             payload = {}
 
-        if self.access_token is not None:
-            payload['access_token'] =  self.access_token
+        #if self.access_token is not None:
+        #    payload['access_token'] =  self.access_token # no need to insert token in the payload
 
-        r = requests.post(url, data=payload)
+        #r = requests.post(url, data=payload) # see line below
+        r = self.session.post(url, data=payload) # send request as part of session
 
         # raises an exception if there was an http error
         r.raise_for_status()
@@ -60,10 +64,11 @@ class CanvasAPI():
         if payload is None:
             payload = {}
 
-        if self.access_token is not None:
-            payload['access_token'] =  self.access_token
+        #if self.access_token is not None:
+        #    payload['access_token'] =  self.access_token # no need to insert token in the payload
 
-        r = requests.get(url, params=payload)
+        #r = requests.get(url, params=payload) see line below
+        r = self.session.get(url, data=payload) # send request as part of session
 
         # raises an exception if there was an http error
         r.raise_for_status()
